@@ -7,25 +7,27 @@ from numpy import linspace, sqrt, arctan2
 
 class bot:
     def __init__(self):
-        #Start node, publishers, subscribers
-        #Node
+        #Initialize Node
         rospy.init_node('move', anonymous=True)
-        #Publisher for /cmd_vel
+        #Start Publishes
         self.vel_pub = rospy.Publisher('cmd_vel_mux/input/teleop', Twist, queue_size=10)
-        #Subscriber to get the /scan data
+        #Start Subscribers
         self.pose_sub = rospy.Subscriber("/scan", LaserScan, self.update_scan)
-        self.min_range = 30
-        # self.pose = Pose()
+        #Set any ROS parameters     
+        rospy.set_param('stop_distance',0.75)
+        #Set any other class properties 
+        # self.min_range = 50  
+        #Limit update rate
         self.rate = rospy.Rate(10)
+
+        #Sleep so that topics get published
+        rospy.sleep(.001)
 
     def update_scan(self, data):
         range = list(data.ranges)
         #angle = linspace(data.angle_min,data.angle_max,len(range))
 
-        self.min_range = min(range)
-        print(min(range)) 
-
-        # print(self.laser)
+        self.distance_to_wall = min(range)
 
     def update_pose(self, data):
         self.x = round(data.x,4)
@@ -84,13 +86,12 @@ class bot:
         self.vel_pub.publish(vel_msg)
         print('Made it!')
 
-        #Stop if control C'd
-        #rospy.spin()
-
     def drive_fwd(self):
         vel_msg = Twist()
 
-        vel_msg.linear.x = .1
+        fwd_vel = .1
+
+        vel_msg.linear.x = fwd_vel
         vel_msg.linear.y = 0
         vel_msg.linear.z = 0
         vel_msg.angular.x = 0
@@ -98,12 +99,16 @@ class bot:
         vel_msg.angular.z = 0
         
         while True:
-            if self.min_range < .52:
+            print([self.distance_to_wall,rospy.get_param('stop_distance')])
+            if self.distance_to_wall < rospy.get_param('stop_distance'):
                 vel_msg.linear.x = 0
                 print('stopped!')
+            else:
+                vel_msg.linear.x = fwd_vel
 
             self.vel_pub.publish(vel_msg)
             self.rate.sleep()
+        
 
 if __name__ == '__main__':
     try:
