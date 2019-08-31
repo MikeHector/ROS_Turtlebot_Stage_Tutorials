@@ -1,0 +1,6 @@
+## Gitignore for my ROS package 
+
+#Folders to ignore
+[Bb]agfiles/
+
+
