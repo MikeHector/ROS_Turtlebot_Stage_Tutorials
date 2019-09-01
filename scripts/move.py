@@ -2,7 +2,8 @@
 import rospy
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
-from numpy import linspace, sqrt, arctan2
+from numpy import linspace, sqrt, arctan2, arcsin
+# import itertools
 
 
 class bot:
@@ -16,7 +17,8 @@ class bot:
         self.teleop_sub = rospy.Subscriber("turtlebot_teleop_keyboard/cmd_vel", Twist,self.update_teleop)
         #Set any ROS parameters     
         rospy.set_param('stop_distance',0.75)
-        #Set any other class properties 
+        #Set any other class properties
+        self.robot_diameter = .3 
         #Limit update rate
         self.rate = rospy.Rate(10)
         #Sleep so that topics get published
@@ -26,10 +28,15 @@ class bot:
         self.teleop_msg = data
 
     def update_scan(self, data):
-        range = list(data.ranges)
-        #angle = linspace(data.angle_min,data.angle_max,len(range))
+        scan_ranges = list(data.ranges)
+        scan_angles = linspace(data.angle_min,data.angle_max,len(scan_ranges))
 
-        self.distance_to_wall = min(range)
+        #Find the minimum range over the scan angles that could see a collision
+        self.distance_to_wall = 800
+        critical_collision_angle = arcsin(self.robot_diameter/(2 * rospy.get_param('stop_distance')))
+        for angle,range in zip(scan_angles,scan_ranges):
+            if (angle < critical_collision_angle) and (angle > -critical_collision_angle) and (range < self.distance_to_wall):
+                self.distance_to_wall = range
 
     def update_pose(self, data):
         self.x = round(data.x,4)
@@ -91,13 +98,13 @@ class bot:
     def drive_fwd(self):
         while True:
             auto_pilot_msg = self.teleop_msg
+            # print([self.distance_to_wall])
             if self.distance_to_wall < rospy.get_param('stop_distance'):
                 auto_pilot_msg.linear.x = 0
                 print('stopped!')
             self.vel_pub.publish(auto_pilot_msg)
             self.rate.sleep()
         
-
 if __name__ == '__main__':
     try:
         n = bot()

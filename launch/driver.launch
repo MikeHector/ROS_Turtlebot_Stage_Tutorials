@@ -7,6 +7,8 @@
  
   <node pkg="turtlebot_teleop" type="turtlebot_teleop_key" name="turtlebot_teleop_keyboard" output="screen">
   <remap from="turtlebot_teleop_key" to="cmd_vel_mux/input/teleop"/>
+  <param name="scale_linear" value="1.0" type="double"/>
+  <param name="scale_angular" value="1.5" type="double"/>
   </node>
 
   <!-- <group ns="turtle1"> -->
