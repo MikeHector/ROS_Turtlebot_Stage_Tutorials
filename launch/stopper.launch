@@ -1,14 +1,19 @@
 <launch>
-
+  <!-- <group ns="turtle1"> -->
+  <node pkg="exercises" name="stop_protection" type="move.py" output="screen"/>
+  <!-- </group> -->
   <!-- <group ns="turtle1">
     <node pkg="turtlebot_stage" name="sim" type="turtlebot_in_stage"/>
   </group> -->
   <include file="$(find turtlebot_stage)/launch/turtlebot_in_stage.launch"/>
  
+  <node pkg="turtlebot_teleop" type="turtlebot_teleop_key" 
+name="turtlebot_teleop_keyboard" output="screen">
+  <remap from="turtlebot_teleop_key" to="cmd_vel_mux/input/teleop"/>
+  </node>
+
   <!-- <remap from="turtle1/cmd_vel_mux/input/teleop" -->
 
-  <!-- <group ns="turtle1"> -->
-  <node pkg="exercises" name="stop_protection" type="move.py" output="screen"/>
-  <!-- </group> -->
+
 
 </launch>

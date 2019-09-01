@@ -13,15 +13,17 @@ class bot:
         self.vel_pub = rospy.Publisher('cmd_vel_mux/input/teleop', Twist, queue_size=10)
         #Start Subscribers
         self.pose_sub = rospy.Subscriber("/scan", LaserScan, self.update_scan)
+        self.teleop_sub = rospy.Subscriber("turtlebot_teleop_keyboard/cmd_vel", Twist,self.update_teleop)
         #Set any ROS parameters     
         rospy.set_param('stop_distance',0.75)
         #Set any other class properties 
-        # self.min_range = 50  
         #Limit update rate
         self.rate = rospy.Rate(10)
-
         #Sleep so that topics get published
         rospy.sleep(.001)
+
+    def update_teleop(self,data):
+        self.teleop_msg = data
 
     def update_scan(self, data):
         range = list(data.ranges)
@@ -87,26 +89,12 @@ class bot:
         print('Made it!')
 
     def drive_fwd(self):
-        vel_msg = Twist()
-
-        fwd_vel = .1
-
-        vel_msg.linear.x = fwd_vel
-        vel_msg.linear.y = 0
-        vel_msg.linear.z = 0
-        vel_msg.angular.x = 0
-        vel_msg.angular.y = 0
-        vel_msg.angular.z = 0
-        
         while True:
-            print([self.distance_to_wall,rospy.get_param('stop_distance')])
+            auto_pilot_msg = self.teleop_msg
             if self.distance_to_wall < rospy.get_param('stop_distance'):
-                vel_msg.linear.x = 0
+                auto_pilot_msg.linear.x = 0
                 print('stopped!')
-            else:
-                vel_msg.linear.x = fwd_vel
-
-            self.vel_pub.publish(vel_msg)
+            self.vel_pub.publish(auto_pilot_msg)
             self.rate.sleep()
         
 
