@@ -64,6 +64,6 @@ if __name__ == '__main__':
     while True:
         try:
             n = bot()
-            n.nav()
+            # n.nav()
         except rospy.ROSInterruptException:
             pass

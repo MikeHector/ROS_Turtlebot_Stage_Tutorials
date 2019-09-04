@@ -1,7 +1,5 @@
 <launch>
-
   <include file="$(find turtlebot_stage)/launch/turtlebot_in_stage.launch"/>
- 
 
   <!-- <group ns="turtle1"> -->
   <node pkg="exercises" name="patrol" type="nav_wp.py" output="screen"/>

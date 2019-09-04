@@ -102,7 +102,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES beginner_tutorials
-CATKIN_DEPENDS message_runtime roscpp rospy std_msgs
+CATKIN_DEPENDS message_runtime roscpp rospy std_msgs cv_bridge
 #  DEPENDS system_lib
 )
 
