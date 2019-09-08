@@ -28,8 +28,14 @@ class bot:
         self.client.wait_for_server()
 
         self.waypoints = [
-            [(2.1, 2.2, 0.0), (0.0, 0.0, 0.0, 1.0)],
-            [(6.5, 4.43, 0.0), (0.0, 0.0, -0.984047240305, 0.177907360295)]
+            [(5, 2, 0.0), (0.0, 0.0, 0.0, 1.0)],
+            [(2, 3, 0.0), (0.0, 0.0, 0, 1)],
+            [(6, 4, 0.0), (0.0, 0.0, 0, 1)],
+            [(2, 9, 0.0), (0.0, 0.0, 0, 1)],
+            [(9, 2, 0.0), (0.0, 0.0, 0, 1)],
+            [(7, 7, 0.0), (0.0, 0.0, 0, 1)],
+            [(5, 7, 0.0), (0.0, 0.0, 0, 1)],
+            [(2, 7, 0.0), (0.0, 0.0, 0, 1)],
         ]
     def update_Marker(self,wp,goal): #TODO: this function only needs goal; pull the position info out of it instead of wp
         self.marker = Marker()
@@ -54,7 +60,7 @@ class bot:
     def nav(self):
         for wp in self.waypoints:
             goal = waypoint_to_goal_pose(wp)
-            self.update_Marker(wp,goal)
+            # self.update_Marker(wp,goal)
             self.client.send_goal(goal)
             self.client.wait_for_result()
 
@@ -64,6 +70,6 @@ if __name__ == '__main__':
     while True:
         try:
             n = bot()
-            # n.nav()
+            n.nav()
         except rospy.ROSInterruptException:
             pass

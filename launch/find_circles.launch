@@ -81,7 +81,8 @@
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find turtlebot_stage)/rviz/robot_navigation.rviz"/>
 
   <!--  **************** Main Navigation ****************  -->
-  <node pkg="exercises" name="wp_navigation" type="search_for_circles.py" output="screen"/>
+  <node pkg="exercises" name="wp_navigator" type="search_for_circles.py" output="screen"/>
+  <node pkg="exercises" name="circle_finder" type="nav_wp.py" output="screen"/>
 
   <!--  **************** Circle Detection ****************  -->
     <!--Run the opencv Hough circle node.-->
